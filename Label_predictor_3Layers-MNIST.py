@@ -1,4 +1,4 @@
-Image prediction using Pytorch on MNIST Dataset using 2 Layers based on Jovian.ml's Deep Learning with PyTorch: Zero to GANs Course and fast.ai's Course.  
+Image prediction using Pytorch on MNIST Dataset using 3 Layers based on Jovian.ml's Deep Learning with PyTorch: Zero to GANs Course and fast.ai's Course.  
 #File created using Kaggle NoteBook and PYTHON 3
 
 # Commented out IPython magic to ensure Python compatibility.
@@ -46,8 +46,9 @@ def accuracy(outputs,labels):
 class MNISTModel(nn.Module):
   def __init__(self, in_size, hidden_size, out_size):
     super().__init__()
-    self.linear1=nn.Linear(input_size,hidden_size) # Hideen layer. Performs Linear Transformation.
-    self.linear2=nn.Linear(hidden_size,out_size)  # Output Layer
+    self.linear1=nn.Linear(input_size,hidden_size) # Hidden layer. Performs Linear Transformation.
+    self.linear2=nn.Linear(hidden_size,hidden_size*2) # Hidden layer
+    self.linear3=nn.Linear(hidden_size*2,out_size)  # Output Layer
 
   def forward(self,xb): #nn.Module objects are used as if they are functions (i.e they are callable), but behind the scenes Pytorch will call our forward method automatically.
     xb=xb.view(xb.size(0),-1) #Reshaping the tensor.-1 indicates that you know the no. of columns but don't know the no. of rows.
@@ -55,8 +56,10 @@ class MNISTModel(nn.Module):
     out=self.linear1(xb)
     #Applying Activation function ReLU-Rectified Linear Unit
     out=F.relu(out)
-    #Getting predictions from output layer
     out=self.linear2(out)
+    out=F.relu(out)
+    #Getting predictions from output layer
+    out=self.linear3(out)
     return out
 
   def training_step(self,batch): #Finding out the loss in training step
